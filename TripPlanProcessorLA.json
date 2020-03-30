@@ -1,0 +1,102 @@
+{
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "actions": {
+      "Initialize_httpRequestBody": {
+        "inputs": {
+          "variables": [
+            {
+              "name": "httpRequestBody",
+              "type": "object",
+              "value": "@triggerBody()"
+            }
+          ]
+        },
+        "runAfter": {},
+        "type": "InitializeVariable"
+      },
+      "Initialize_soapEnv": {
+        "inputs": {
+          "variables": [
+            {
+              "name": "soapEnv",
+              "type": "object",
+              "value": "@json(xml(triggerMultipartBody(0)))"
+            }
+          ]
+        },
+        "runAfter": {
+          "Initialize_httpRequestBody": [
+            "Succeeded"
+          ]
+        },
+        "type": "InitializeVariable"
+      },
+      "Initialize_tripPlanOutput": {
+        "inputs": {
+          "variables": [
+            {
+              "name": "tripPlanOutput",
+              "type": "object",
+              "value": "@json(xml(triggerMultipartBody(1)))?['TripPlanOutput']"
+            }
+          ]
+        },
+        "runAfter": {
+          "Initialize_soapEnv": [
+            "Succeeded"
+          ]
+        },
+        "type": "InitializeVariable"
+      },
+      "Send_event": {
+        "inputs": {
+          "body": {
+            "ContentData": "@{base64(variables('tripPlanOutput'))}"
+          },
+          "host": {
+            "connection": {
+              "name": "@parameters('$connections')['eventhubs']['connectionId']"
+            }
+          },
+          "method": "post",
+          "path": "/@{encodeURIComponent('tripplanevthub1')}/events"
+        },
+        "runAfter": {
+          "Initialize_tripPlanOutput": [
+            "Succeeded"
+          ]
+        },
+        "type": "ApiConnection"
+      }
+    },
+    "contentVersion": "1.0.0.0",
+    "outputs": {},
+    "parameters": {
+      "$connections": {
+        "defaultValue": {},
+        "type": "Object"
+      }
+    },
+    "triggers": {
+      "manual": {
+        "inputs": {
+          "schema": {}
+        },
+        "kind": "Http",
+        "type": "Request"
+      }
+    }
+  },
+  "parameters": {
+    "$connections": {
+      "value": {
+        "eventhubs": {
+          "connectionId": "/subscriptions/XXX/resourceGroups/YYYY/providers/Microsoft.Web/connections/eventhubs-1",
+          "connectionName": "eventhubs-1",
+          "id": "/subscriptions/XXX/providers/Microsoft.Web/locations/australiaeast/managedApis/eventhubs"
+        }
+      }
+    }
+  }
+}

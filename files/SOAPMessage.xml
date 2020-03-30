@@ -1,0 +1,8 @@
+﻿<?xml version='1.0' encoding='UTF-8'?>
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/1999/XMLSchema-instance" xmlns:xsd="http://www.w3.org/1999/XMLSchema">
+  <SOAP-ENV:Body>
+    <ns1:process xmlns:ns1="urn:TripFlow" SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+      <message href ="cid:2014414661.1527646642182.apache-soap.MUCDWMV12"/>
+    </ns1:process>
+  </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>
